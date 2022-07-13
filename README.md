@@ -35,15 +35,3 @@ Run init script
 
 - Make script as daemon service
 - Faster raspberry boot
-
-
-## FAQ
-
-#### Why keyboard_hid.py
-
-Answer 1
-
-#### Question 2
-
-Answer 2
-
