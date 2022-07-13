@@ -110,7 +110,7 @@ async def start():
 
         
 if __name__ == '__main__':
-    logging.basicConfig(filename='~/keyboard_hid/logs.log', filemode='w', format='%(asctime)s:  %(message)s')
+    logging.basicConfig(filename='logs.log', filemode='w', format='%(asctime)s:  %(message)s')
     logging.info = logging.warning
     logging.info('Enetring main')
 
