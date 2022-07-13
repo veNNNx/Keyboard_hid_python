@@ -4,8 +4,7 @@ Python script to make your raspberry pi zero acts like a keyboard \
 To raspberry connect via bluetooth keyboard, and plug usb cable into USB OTG port \
 In this example was used keyboard Keychron k10\
 Also you can connect led (in this project is one led at GPIO 2) \
-it blinks while connecting and turn on after succes \
-log file at ~/Keyboard_hid_python/logs.log
+it blinks while connecting and turn on after succes 
 
 
 ## Authors
@@ -14,7 +13,7 @@ log file at ~/Keyboard_hid_python/logs.log
 
 
 ## Deployment
-Run raspberry with plugged usb cable into PWR socket. 
+Run raspberry with plugged usb cable into PWR port. 
 Connect via ssh
 
 Clone repo  sa
@@ -30,6 +29,10 @@ Run init script
   chmod +x init.sh
   sudo ./init.sh
 ```
+
+Change USB PWR port to USB OTG 
+
+log file at ~/Keyboard_hid_python/logs.log
 
 ## Features
 
