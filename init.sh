@@ -17,7 +17,7 @@ else
 fi
 
 
-if [ -f "~/Keyboard_hid_python/keyboard_hid.py" ]; 
+if [ -f "~/Keyboard_hid_python/start.sh" ]; 
 then
     echo -e '\033[0;96mKeyboard HID configuration already exists\033[0m'
 	exit
@@ -37,9 +37,7 @@ echo "libcomposite" | sudo tee -a /etc/modules
 
 
 echo -e '\033[32m2. Create keyboard hid bash script\033[0m'
-cd
-git clone https://github.com/veNNNx/Keyboard_hid_python.git
-cd Keyboard_hid_python/
+cd ~/Keyboard_hid_python/
 touch start.sh
 chmod +x start.sh
 echo 'python3 ~/Keyboard_hid_python/keyboard_hid.py' > start.sh
