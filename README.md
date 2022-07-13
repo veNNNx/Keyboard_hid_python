@@ -11,9 +11,9 @@ In this example was used keyboard Keychron k10
 
 
 ## Deployment
-Run raspberry with plugged usb cable into PWR socket
-Run clean raspbian on raspberry and connect to it by ssh
-Optional: Connect bluetooth keyboard to raspberry
+Run raspberry with plugged usb cable into PWR socket/
+Run clean raspbian on raspberry and connect to it by ssh/
+Optional: Connect bluetooth keyboard to raspberry/
 
 Clone repo
 ```bash
