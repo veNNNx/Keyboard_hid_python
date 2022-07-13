@@ -21,7 +21,7 @@ Clone repo  sa
 
 
 ```bash
-  git clone veNNNx/Keyboard_hid_python
+  git clone https://github.com/veNNNx/Keyboard_hid_python
 ```
 
 Run init script
