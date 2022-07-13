@@ -40,7 +40,7 @@ echo -e '\033[32m2. Create keyboard hid bash script\033[0m'
 cd ~/Keyboard_hid_python/
 touch start.sh
 chmod +x start.sh
-echo 'python3 ~/Keyboard_hid_python/keyboard_hid.py' > start.sh
+echo 'sudo python3 ~/Keyboard_hid_python/keyboard_hid.py' > start.sh
 
 
 
