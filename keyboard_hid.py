@@ -13,7 +13,7 @@ class Keyboard():
 
     def read_event(self):
         try:
-            dev = InputDevice('/dev/input/event1')
+            dev = InputDevice('/dev/input/event0')
             logging.info('Keyboard connected')
             led_light.blinking('ON')
             for event in dev.read_loop():
@@ -120,9 +120,9 @@ if __name__ == '__main__':
                     '1','2', '3', '4', '5', '6', '7', '8', '9', '0']
 
     _letter_dict_DLC = {'enter': 88, 'esc': 41, 'backspace': 42, 'tab': 43, 'space' : 44, 
-            'brightnessdown': 58, 'brightnessup': 59, 'scale': 60, 'dashboard': 61, 'kbdillumdown': 62, 'kbdillumup': 63,
-             'previoussong': 64, 'playpause': 65, 'nextsong': 66, "mute']": 67, 'volumedown': 68, 'volumeup': 69, 'delete': 76, #f9-f12 to do
-            'right': 79, 'left': 80, 'down': 81, 'up': 82,}
+            'f1': 58, 'brightnessdown': 58, 'f2': 59, 'brightnessup': 59, 'f3': 60, 'scale': 60, 'f4': 61, 'dashboard': 61, 'f5': 62, 'kbdillumdown': 62,
+            'f6': 63, 'kbdillumup': 63, 'f7': 64, 'previoussong': 64, 'f8': 65, 'playpause': 65, 'f9': 66, 'nextsong': 66, 'f10': 67, "mute']": 67, 
+            'f11': 68, 'volumedown': 68, 'f12': 69, 'volumeup': 69, 'delete': 76, 'right': 79, 'left': 80, 'down': 81, 'up': 82,}
 
     # letter_code = lambda x: chr(0)*2+chr(x)+chr(0)*5
     number = [i + 4 for i in range(len(letter_dict))]
