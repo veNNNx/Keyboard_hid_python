@@ -16,7 +16,7 @@ it blinks while connecting and turn on after succes
 Run raspberry with plugged usb cable into PWR port. 
 Connect via ssh
 
-Clone repo  sa
+Clone repo
 
 
 ```bash
