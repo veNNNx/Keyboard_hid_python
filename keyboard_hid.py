@@ -1,5 +1,4 @@
-import logging, tty, sys, termios, time, asyncio
-from selectors import EpollSelector
+import logging, time, asyncio
 from evdev import InputDevice, categorize, ecodes
 import RPi.GPIO as GPIO
 
@@ -8,6 +7,7 @@ class Keyboard():
         logging.info('Init keyboard')
         self.event = bytearray(8)
         self.event_key_position = 3
+        self.capslock_on = False
         #2^  0 - lctrl, 1 - lshift, 2 - lalt, 4 - rctrl, 5 - rshift, 6- ralt
         self.special_keys = {'leftctrl': 1, 'leftshift': 2, 'leftalt': 4,'rightctrl': 16, 'rightshift': 32,  'rightalt': 64}
 
@@ -31,9 +31,12 @@ class Keyboard():
             if status == 'down':
                 self.format_event(key)
             elif status == 'up':
-                self.send_msg()
-                logging.info('Release keys')
+                if key in self.special_keys:
+                    self.event[0] -= self.special_keys[key]
+                if key == 'capslock':
+                    self.capslock_on = False
                 self.reset_event()
+            self.send_msg()
         except Exception as e:
             logging.warning(f'handle_event error: {e}')
 
@@ -45,17 +48,27 @@ class Keyboard():
                 logging.info(f'Add special key {key}')
             else:
                 logging.info(f'Add next special keys {key}!')
-                self.event[0] = self.event[0] + self.special_keys[key]
+                self.event[0] += self.special_keys[key]
         else:
-            logging.info(f'Pressed down {key}')
-            self.event[self.event_key_position] = keys[key]
-            self.event_key_position += 1
+            if key == 'capslock':
+                logging.info('CapsLock ON')
+                self.event[2] = keys[key]
+                self.capslock_on = True
+            else:
+                if self.event[7] == 0:    
+                    logging.info(f'Pressed down {key}')
+                    self.event[self.event_key_position] = keys[key]
+                    self.event_key_position += 1
+                    if self.capslock_on and self.event[2] == 0:
+                        self.event[2] = keys['capslock']
+                else:
+                    self.reset_event()
+
         
     def send_msg(self):
         logging.info(f'SEND {bytes(self.event)}')
         self.write_key(self.event)
         self.release_key()
-        self.event = 0
 
     def write_key(self, report):
         with open('/dev/hidg0', 'rb+') as fd:
@@ -66,8 +79,12 @@ class Keyboard():
         self.write_key(release_report)
 
     def reset_event(self):
+        special_keys = self.event[0]
         self.event_key_position = 3
         self.event = bytearray(8)
+        if self.capslock_on:
+            self.event[2] = keys['capslock']
+        self.event[0] = special_keys
 
 class LED():
     def __init__(self) -> None:
@@ -119,7 +136,7 @@ if __name__ == '__main__':
                     'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
                     '1','2', '3', '4', '5', '6', '7', '8', '9', '0']
 
-    _letter_dict_DLC = {'enter': 88, 'esc': 41, 'backspace': 42, 'tab': 43, 'space' : 44, 
+    _letter_dict_DLC = {'enter': 88, 'esc': 41, 'backspace': 42, 'tab': 43, 'space' : 44, 'capslock': 57, 
             'f1': 58, 'brightnessdown': 58, 'f2': 59, 'brightnessup': 59, 'f3': 60, 'scale': 60, 'f4': 61, 'dashboard': 61, 'f5': 62, 'kbdillumdown': 62,
             'f6': 63, 'kbdillumup': 63, 'f7': 64, 'previoussong': 64, 'f8': 65, 'playpause': 65, 'f9': 66, 'nextsong': 66, 'f10': 67, "mute']": 67, 
             'f11': 68, 'volumedown': 68, 'f12': 69, 'volumeup': 69, 'delete': 76, 'right': 79, 'left': 80, 'down': 81, 'up': 82,}
