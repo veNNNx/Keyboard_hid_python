@@ -27,12 +27,11 @@ class Keyboard():
         key = event.split()[-2].lower().partition('_')[2].strip('),') # 'enter'
         status = event.split()[-1] # 'up'
         try:
-            if status == 'down':
+            if status in ['down', 'hold']:
                 self.format_event(key)
             elif status == 'up':
                 if key in self.special_keys:
                     self.event[0] -= self.special_keys[key]
-                self.reset_event()
             self.send_msg()
         except Exception as e:
             logging.warning(f'handle_event error: {e}')
@@ -47,6 +46,7 @@ class Keyboard():
                 logging.info(f'Add next special keys {key}!')
                 self.event[0] += self.special_keys[key]
         else:
+            logging.info(f'Pressed down {key}')
             if self.event[7] == 0:    
                 self.event[self.event_key_position] = keys[key]
                 self.event_key_position += 1
@@ -54,9 +54,10 @@ class Keyboard():
                 self.reset_event()
 
     def send_msg(self):
-        logging.info(f'SEND {bytes(self.event)}')
+        # logging.info(f'SEND {bytes(self.event)}')
         self.write_key(self.event)
         self.release_key()
+        self.reset_event()
 
     def write_key(self, report):
         with open('/dev/hidg0', 'rb+') as fd:
