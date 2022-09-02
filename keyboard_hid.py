@@ -7,9 +7,8 @@ class Keyboard():
         logging.info('Init keyboard')
         self.event = bytearray(8)
         self.event_key_position = 3
-        self.capslock_on = False
-        #2^  0 - lctrl, 1 - lshift, 2 - lalt, 4 - rctrl, 5 - rshift, 6- ralt
-        self.special_keys = {'leftctrl': 1, 'leftshift': 2, 'leftalt': 4,'rightctrl': 16, 'rightshift': 32,  'rightalt': 64}
+        #2^  0 - lctrl, 1 - lshift, 2 - lalt, 3 - lwin,  4 - rctrl, 5 - rshift, 6- ralt, 7 - rwin
+        self.special_keys = {'leftctrl': 1, 'leftshift': 2, 'leftalt': 4, 'leftmeta':8, 'rightctrl': 16, 'rightshift': 32,  'rightalt': 64, 'rightmeta': 128}
 
     def read_event(self):
         try:
@@ -136,19 +135,21 @@ if __name__ == '__main__':
                     'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
                     '1','2', '3', '4', '5', '6', '7', '8', '9', '0']
 
-    _letter_dict_DLC = {'enter': 88, 'esc': 41, 'backspace': 42, 'tab': 43, 'space' : 44, 'capslock': 57, 
-            'f1': 58, 'brightnessdown': 58, 'f2': 59, 'brightnessup': 59, 'f3': 60, 'scale': 60, 'f4': 61, 'dashboard': 61, 'f5': 62, 'kbdillumdown': 62,
-            'f6': 63, 'kbdillumup': 63, 'f7': 64, 'previoussong': 64, 'f8': 65, 'playpause': 65, 'f9': 66, 'nextsong': 66, 'f10': 67, "mute']": 67, 
-            'f11': 68, 'volumedown': 68, 'f12': 69, 'volumeup': 69, 'delete': 76, 'right': 79, 'left': 80, 'down': 81, 'up': 82,}
-
+    _letter_dict_DLC = {'enter': 88, 'esc': 41, 'backspace': 42, 'tab': 43, 'space' : 44, 'minus': 45, 'equal': 46,
+                        'leftbrace': 47, 'rightbrace': 48, 'backslash': 49, 'semicolon': 51, 'apostrophe': 52, 
+                        'grave': 53, 'comma': 54, 'dot': 55, 'slash': 56, 'capslock': 57, 'f1': 58, 'brightnessdown': 58, 
+                        'f2': 59, 'brightnessup': 59, 'f3': 60, 'scale': 60,'f4': 61, 'dashboard': 61, 'f5': 62, 
+                        'kbdillumdown': 62, 'f6': 63, 'kbdillumup': 63,'f7': 64, 'previoussong': 64, 'f8': 65, 
+                        'playpause': 65, 'f9': 66, 'nextsong': 66, 'f10': 67, "mute']": 67, 'f11': 68, 'volumedown': 68, 
+                        'f12': 69, 'volumeup': 69,'printscreen': 70, 'delete': 76, 'right': 79, 'left': 80, 'down': 81, 
+                        'up': 82, 'numlock': 83, 'insert': 73, 'home':74, 'pageup':75, 'end': 77, 'pagedown': 78, 'kpslash': 84, 
+                        'kpasterisk': 85, 'kpminus': 86, 'kpplus': 87, 'kpenter': 88, 'kpdot': 89, 'kp1': 89, 'kp2': 90,
+                         'kp3': 91, 'kp4': 92, 'kp5': 93, 'kp6': 94, 'kp7': 95, 'kp8': 96, 'kp9': 97, 'kp0': 98}
     # letter_code = lambda x: chr(0)*2+chr(x)+chr(0)*5
     number = [i + 4 for i in range(len(letter_dict))]
     keys =  dict(zip(letter_dict,number))
-    for key, value in _letter_dict_DLC.items():
-        _letter_dict_DLC[key] = value
     keys = {**keys, **_letter_dict_DLC}
-    
+
     keyboard = Keyboard()
     led_light = LED()
-
     asyncio.run(start())
