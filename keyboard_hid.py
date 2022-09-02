@@ -32,8 +32,6 @@ class Keyboard():
             elif status == 'up':
                 if key in self.special_keys:
                     self.event[0] -= self.special_keys[key]
-                if key == 'capslock':
-                    self.capslock_on = False
                 self.reset_event()
             self.send_msg()
         except Exception as e:
@@ -49,21 +47,12 @@ class Keyboard():
                 logging.info(f'Add next special keys {key}!')
                 self.event[0] += self.special_keys[key]
         else:
-            if key == 'capslock':
-                logging.info('CapsLock ON')
-                self.event[2] = keys[key]
-                self.capslock_on = True
+            if self.event[7] == 0:    
+                self.event[self.event_key_position] = keys[key]
+                self.event_key_position += 1
             else:
-                if self.event[7] == 0:    
-                    logging.info(f'Pressed down {key}')
-                    self.event[self.event_key_position] = keys[key]
-                    self.event_key_position += 1
-                    if self.capslock_on and self.event[2] == 0:
-                        self.event[2] = keys['capslock']
-                else:
-                    self.reset_event()
+                self.reset_event()
 
-        
     def send_msg(self):
         logging.info(f'SEND {bytes(self.event)}')
         self.write_key(self.event)
@@ -81,8 +70,6 @@ class Keyboard():
         special_keys = self.event[0]
         self.event_key_position = 3
         self.event = bytearray(8)
-        if self.capslock_on:
-            self.event[2] = keys['capslock']
         self.event[0] = special_keys
 
 class LED():
