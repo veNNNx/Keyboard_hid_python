@@ -30,9 +30,8 @@ Run init script
   sudo ./init.sh
 ```
 
-Change USB PWR port to USB OTG 
 
-log file at ~/Keyboard_hid_python/logs.log
+log file path: ~/logs.log
 
 ## Features
 
