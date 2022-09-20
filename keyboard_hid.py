@@ -8,7 +8,7 @@ class Keyboard():
         self.event = bytearray(8)
         self.event_key_position = 3
         #2^  0 - lctrl, 1 - lshift, 2 - lalt, 3 - lwin,  4 - rctrl, 5 - rshift, 6- ralt, 7 - rwin
-        self.special_keys = {'leftctrl': 1, 'leftshift': 2, 'leftalt': 4, 'leftmeta':8, 'rightctrl': 16, 'rightshift': 32,  'rightalt': 64, 'rightmeta': 128}
+        self.event_zero = []
 
     def read_event(self):
         try:
@@ -27,24 +27,25 @@ class Keyboard():
         key = event.split()[-2].lower().partition('_')[2].strip('),') # 'enter'
         status = event.split()[-1] # 'up'
         try:
-            if status in ['down', 'hold']:
+            if status == 'down' or (status == 'hold' and key not in self.event_zero):
                 self.format_event(key)
+                self.send_msg()
             elif status == 'up':
-                if key in self.special_keys:
-                    self.event[0] -= self.special_keys[key]
-            self.send_msg()
+                if key in special_keys:
+                    self.event[0] -= special_keys[key]
+                    self.event_zero.remove(key)
+                    if self.event[0] == 0:
+                        self.event_zero = []
+                self.send_msg()
         except Exception as e:
             logging.warning(f'handle_event error: {e}')
 
     def format_event(self, key):
         # key = 'enter'
-        if key in self.special_keys:
-            if self.event[0] == 0:
-                self.event[0] = self.special_keys[key]
-                logging.info(f'Add special key {key}')
-            else:
-                logging.info(f'Add next special keys {key}!')
-                self.event[0] += self.special_keys[key]
+        if key in special_keys:
+            self.event[0] += special_keys[key]
+            self.event_zero.append(key)
+            logging.info(f'Add: {key}, active special keys: {self.event_zero}')
         else:
             logging.info(f'Pressed down {key}')
             if self.event[7] == 0:    
@@ -54,24 +55,19 @@ class Keyboard():
                 self.reset_event()
 
     def send_msg(self):
-        # logging.info(f'SEND {bytes(self.event)}')
+        logging.info(f'SEND {bytes(self.event)}')
         self.write_key(self.event)
-        self.release_key()
         self.reset_event()
 
     def write_key(self, report):
         with open('/dev/hidg0', 'rb+') as fd:
             fd.write(report)
 
-    def release_key(self):
-        release_report = (chr(0)*8).encode()
-        self.write_key(release_report)
-
     def reset_event(self):
-        special_keys = self.event[0]
+        _special_keys = self.event[0]
         self.event_key_position = 3
         self.event = bytearray(8)
-        self.event[0] = special_keys
+        self.event[0] = _special_keys
 
 class LED():
     def __init__(self) -> None:
@@ -133,10 +129,12 @@ if __name__ == '__main__':
                         'up': 82, 'numlock': 83, 'insert': 73, 'home':74, 'pageup':75, 'end': 77, 'pagedown': 78, 'kpslash': 84, 
                         'kpasterisk': 85, 'kpminus': 86, 'kpplus': 87, 'kpenter': 88, 'kpdot': 89, 'kp1': 89, 'kp2': 90,
                          'kp3': 91, 'kp4': 92, 'kp5': 93, 'kp6': 94, 'kp7': 95, 'kp8': 96, 'kp9': 97, 'kp0': 98}
-    # letter_code = lambda x: chr(0)*2+chr(x)+chr(0)*5
+
     number = [i + 4 for i in range(len(letter_dict))]
     keys =  dict(zip(letter_dict,number))
     keys = {**keys, **_letter_dict_DLC}
+
+    special_keys = {'leftctrl': 1, 'leftshift': 2, 'leftalt': 4, 'leftmeta':8, 'rightctrl': 16, 'rightshift': 32,  'rightalt': 64, 'rightmeta': 128}
 
     keyboard = Keyboard()
     led_light = LED()
